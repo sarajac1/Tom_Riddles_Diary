@@ -12,7 +12,6 @@ matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
 
 # Funktion för att få användaren att mata in sitt namn (eller annat korrekt namn)
 def get_name(prompt):
-    while True:
         # Sparar värdet av användarens input
         user_input = input(prompt)
         #Skapar ett Doc objekt av användarens inmatning
@@ -21,7 +20,7 @@ def get_name(prompt):
         #Loopar genom entiteterna i doc
         for ent in doc.ents:
             # Om input är en entitet av typen "person" så kommer personligt meddelande skrivas ut
-            #_ här gör så att det är strängen som hanteras och inget numeriskt värde
+            # _(understreck) här gör så att det är sträng-värdet som hanteras och inget numeriskt värde
             if ent.label_ == "PERSON":
                 #Personligt meddelande skrivs ut och loopen bryts
                 print(f"Tom Riddle: Hello {ent.text}. My name is Tom Riddle.")
@@ -51,38 +50,47 @@ def first_matcher():
     matcher.add("FirstReplyWords", None, *patterns)
 
 
-
 #Funktion som svarar på första matchningen
 def respond_to_first_reply(doc):
     #Skapar en variabel av innehållet i doc objektet
     matches = matcher(doc)
+    #Skapar en variabel för att hålla koll på om matchning hittats, initialiseras till falskt
+    match_found = False
     #Loopar genom varje matchning och hittar deras plats
     for match_id, start, end in matches:
         #Tar ut det spannet from dokumentet som matchar sökningen
         span = doc[start:end]
-        if span.text.lower() not in ["github", "computer", "online"]:
-                return ("Is that some muggle technology? Anyway, it was lucky that  I recorded my memories in some"
-                    "more lasting way than ink. \n But I always knew that there would be those who would not want this "
-                    "read. Would you like to know why?")
-        #Om det finns en matchning (case-insensitive) så skrivs ett lämpligt meddelande ut
-                return ("Lucky that I recorded my memories in some more lasting way than ink. But I always "
+        if (span.text.lower() in ["github", "computer", "online"]):
+            match_found = True
+            break
+
+    if match_found:
+        return ("Lucky that I recorded my memories in some more lasting way than ink. But I always "
                     "knew that there would be those who would not want this read.\n  Would you like me to tell you "
                     "more?")
+    else:
+        return ("Is that some muggle technology? Anyway, it was lucky that  I recorded my memories in some"
+                    "more lasting way than ink. \n But I always knew that there would be those who would not want this "
+                    "read. Would you like to know why?")
+
 
 
 #Funktion för att matcha fler nyckelord
 def second_matcher():
+    # Anger nyckelord att leta efter
     keywords = ["yes", "tell me", "why?"]
+    # Loopar över varje ord i nyckelorden och skapar doc objekt av deras tokens
     patterns = [nlp.make_doc(text) for text in keywords]
+    # Lägger till i matcher
     matcher.add("SecondReplyWords", None, *patterns)
 
+#Funktion för att svara på användarens input
 def respond_to_second_reply(doc):
     matches = matcher(doc)
     for match_id, start, end in matches:
         span = doc[start:end]
         if span.text.lower() not in ["github", "computer", "online"]:
-            return
-        ("Are you not interested in the Chamber of Secrets?")
+            return "Are you not interested in the Chamber of Secrets?"
         return ("This app holds memories of terrible things. Things which were covered up. \n "
                 "Things which happened at Hogwarts School of Witchcraft and Wizardry. Would you like to know more?")
 
@@ -100,8 +108,11 @@ def chat():
     #
     response = respond_to_first_reply(doc)
     #
-    response = respond_to_second_reply(doc)
+
+
     print("Tom Riddle: ", response)
+
+    response = respond_to_second_reply(doc)
 
 
 chat()
