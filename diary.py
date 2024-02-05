@@ -21,6 +21,7 @@ def get_name(prompt):
         #Loopar genom entiteterna i doc
         for ent in doc.ents:
             # Om input är en entitet av typen "person" så kommer personligt meddelande skrivas ut
+            #_ här gör så att det är strängen som hanteras och inget numeriskt värde
             if ent.label_ == "PERSON":
                 #Personligt meddelande skrivs ut och loopen bryts
                 print(f"Tom Riddle: Hello {ent.text}. My name is Tom Riddle.")
@@ -59,20 +60,39 @@ def respond_to_first_reply(doc):
     for match_id, start, end in matches:
         #Tar ut det spannet from dokumentet som matchar sökningen
         span = doc[start:end]
+        if span.text.lower() not in ["github", "computer", "online"]:
+                return ("Is that some muggle technology? Anyway, it was lucky that  I recorded my memories in some"
+                    "more lasting way than ink. \n But I always knew that there would be those who would not want this "
+                    "read. Would you like to know why?")
         #Om det finns en matchning (case-insensitive) så skrivs ett lämpligt meddelande ut
-        if span.text.lower() in ["github", "computer", "online"]:
                 return ("Lucky that I recorded my memories in some more lasting way than ink. But I always "
-                        "knew that there would be those who would not want this read.\n  Would you like me to tell you "
-                        "more?")
-        #Fungerar inte som det ska just nu men ska skrivas ut som det inte finns någon match
-        return ("Is that some muggle technology? Anyway, it was lucky that  I recorded my memories in some"
-                "more lasting way than ink. \n But I always knew that there would be those who would not want this "
-                "read. Would you like to know why?")
+                    "knew that there would be those who would not want this read.\n  Would you like me to tell you "
+                    "more?")
+
+
+#Funktion för att matcha fler nyckelord
+def second_matcher():
+    keywords = ["yes", "tell me", "why?"]
+    patterns = [nlp.make_doc(text) for text in keywords]
+    matcher.add("SecondReplyWords", None, *patterns)
+
+def respond_to_second_reply(doc):
+    matches = matcher(doc)
+    for match_id, start, end in matches:
+        span = doc[start:end]
+        if span.text.lower() not in ["github", "computer", "online"]:
+            return
+        ("Are you not interested in the Chamber of Secrets?")
+        return ("This app holds memories of terrible things. Things which were covered up. \n "
+                "Things which happened at Hogwarts School of Witchcraft and Wizardry. Would you like to know more?")
+
+
 
 #Funktion för att få till en konversation med chatbot
 def chat():
     #Anropar metod för första matchningen
     first_matcher()
+    second_matcher()
     #Anropar metod för att användaren ska mata in sitt namn
     get_name("What is your name? ")
     #
@@ -80,7 +100,9 @@ def chat():
     #
     response = respond_to_first_reply(doc)
     #
+    response = respond_to_second_reply(doc)
     print("Tom Riddle: ", response)
+
 
 chat()
 
