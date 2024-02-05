@@ -66,13 +66,11 @@ def respond_to_first_reply(doc):
 
     if match_found:
         return ("Lucky that I recorded my memories in some more lasting way than ink. But I always "
-                    "knew that there would be those who would not want this read.\n  Would you like me to tell you "
-                    "more?")
+                    "knew that there would be those who would not want this read.\n  Would you like to know why?")
     else:
         return ("Is that some muggle technology? Anyway, it was lucky that  I recorded my memories in some"
                     "more lasting way than ink. \n But I always knew that there would be those who would not want this "
                     "read. Would you like to know why?")
-
 
 
 #Funktion för att matcha fler nyckelord
@@ -89,11 +87,35 @@ def respond_to_second_reply(doc):
     matches = matcher(doc)
     for match_id, start, end in matches:
         span = doc[start:end]
-        if span.text.lower() not in ["github", "computer", "online"]:
-            return "Are you not interested in the Chamber of Secrets?"
-        return ("This app holds memories of terrible things. Things which were covered up. \n "
-                "Things which happened at Hogwarts School of Witchcraft and Wizardry. Would you like to know more?")
+        if span.text.lower() in ["github", "computer", "online"]:
+            return ("This app holds memories of terrible things. Things which were covered up. \n "
+                    "Things which happened at Hogwarts School of Witchcraft and Wizardry. Would you like to know more?")
+        return "Are you not interested in the Chamber of Secrets?"
 
+
+#Funktion för tredje matchningen
+def third_matcher (doc):
+    keywords = ["chamber of secrets", "yes", "tell me"]
+    patterns = [nlp.make_doc(text) for text in keywords]
+    matcher.add("ThirdReplyWords", None, *patterns)
+
+
+def respond_to_third_reply(doc):
+    matches = matcher(doc)
+    for match_id, start, end in matches:
+        span = doc[start:end]
+        if span.text.lower() in ["chamber of secrets", "yes", "tell me"]:
+            return ("In my day they told me the Chamber of Secrets was a legend, that it did not exist.\n"
+                    "In my fifth year, the Chamber was opened and the monster attacked several students, finally \n"
+                    "killing one. I caught the person who had opened the Chamber and he was expelled. \n"
+                    "But the Headmaster, Professor Dippet, ashamed that such a thing had happened at Hogwarts, \n"
+                    "forbade me to tell the truth. A story was given out that the girl had died in a freak accident.\n"
+                    "They gave me a nice, shiny, engraved trophy for my trouble and warned me to keep my mouth shut. "
+                    "But I knew it could happen again. The monster lived on, and the one who had the power to release\n"
+                    "it was not imprisoned.'")
+
+
+#Funktion för tredje svaret
 
 
 #Funktion för att få till en konversation med chatbot
@@ -107,12 +129,14 @@ def chat():
     doc = get_user_response("How did you come by my app? ")
     #
     response = respond_to_first_reply(doc)
-    #
 
+    response = respond_to_second_reply(doc)
+
+    response = respond_to_third_reply(doc)
 
     print("Tom Riddle: ", response)
 
-    response = respond_to_second_reply(doc)
+
 
 
 chat()
