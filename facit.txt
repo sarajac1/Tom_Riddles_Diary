@@ -1,0 +1,10 @@
+Frågor och svar (notera att applikationen är case insensitive):
+
+How did you come by my app?
+Godkända svar: Github, online, computer
+
+Would you like to know more?
+Godkända svar: Yes, tell me, Chamber of Secrets
+
+But I know who it was last time...
+Godkända svar: Who, so, and
