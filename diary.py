@@ -25,6 +25,9 @@ def get_name(prompt):
             print("You are not worthy of this app, muggle. It is now closing down.")
             return
 
+        # Initierar en ny boole för att rätt ska outputtas
+        name_found = False
+
         # Loopar genom entiteterna i doc
         for ent in doc.ents:
             # Om input är en entitet av typen "person" så kommer personligt meddelande skrivas ut
@@ -34,16 +37,20 @@ def get_name(prompt):
                 print(f"Tom Riddle: Hello {ent.text}. My name is Tom Riddle.")
                 # Returnerar namnet som hämtats
                 return ent.text
-            else:
-                # Om SpaCy inte känner igen entiteten som ett namn så kommer en uppmaning att uppge ett riktigt namn
-                print("Tom Riddle: I know when people are lying to me and that is not a real name.\n I will ask"
-                      "you again.")
+
+        if not name_found:
+            # Om SpaCy inte känner igen entiteten som ett namn så kommer en uppmaning att uppge ett riktigt namn
+            print("Tom Riddle: I know when people are lying to me and that is not a real name.\n I will ask "
+                  "you again.")
+
 
 
 # Funktion som ska få användarens input
 def get_user_response(prompt):
     # Skapar variabel som användarens input sparas i
     user_input = input(prompt)
+    # Kontrollerar om användaren matat in ett ord som tyder på att de vill avsluta programmet, skriver ut meddelande och
+    # avslutar programmet
     if user_input.lower() in ["exit", "quit", "stop", "no"]:
         print("You are not worthy of this app, muggle. It is now closing down.")
         return
@@ -130,8 +137,8 @@ def respond_to_third_reply(doc):
             break
 
     if match_found:
-        return ("IT WAS ME ALL ALONG\n"
-                "THE HEIR OF SLYTHERIN HAS INFECTED YOUR COMPUTER WITH A VIRUS. *HISSES IN PARSELTONGUE* \n,"
+        return ("IT WAS ME ALL ALONG. \n"
+                "THE HEIR OF SLYTHERIN HAS INFECTED YOUR COMPUTER WITH A VIRUS. *HISSES IN PARSELTONGUE* \n"
                 """
         ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣄⣶⣶⣶⣶⣾⣿⣿⣿⣶⣶⣶⣦⣄⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
         ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
