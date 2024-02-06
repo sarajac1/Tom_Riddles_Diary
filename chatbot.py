@@ -1,0 +1,5 @@
+import diary
+
+diary.chat()
+
+
