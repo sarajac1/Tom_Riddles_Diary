@@ -16,7 +16,7 @@ def get_name(prompt):
     while True:
         # Sparar värdet av användarens input
         user_input = input(prompt)
-        # Skapar ett Doc objekt av användarens inmatning
+        # Skapar ett doc objekt av användarens inmatning
         doc = nlp(user_input)
 
         # Om användarens input (case-insensitive) innehåller någon av orden nedan så skrivs ett meddelande ut och
@@ -25,7 +25,7 @@ def get_name(prompt):
             print("You are not worthy of this app, muggle. It is now closing down.")
             return
 
-        # Initierar en ny boole för att rätt ska outputtas
+        # Initierar en ny boole och antar att namn ej hittats
         name_found = False
 
         # Loopar genom entiteterna i doc
@@ -37,12 +37,10 @@ def get_name(prompt):
                 print(f"Tom Riddle: Hello {ent.text}. My name is Tom Riddle.")
                 # Returnerar namnet som hämtats
                 return ent.text
-
+        # Om SpaCy inte känner igen entiteten som ett namn så kommer en uppmaning att uppge ett riktigt namn
         if not name_found:
-            # Om SpaCy inte känner igen entiteten som ett namn så kommer en uppmaning att uppge ett riktigt namn
             print("Tom Riddle: I know when people are lying to me and that is not a real name.\n I will ask "
                   "you again.")
-
 
 
 # Funktion som ska få användarens input
@@ -64,9 +62,9 @@ def get_user_response(prompt):
 def first_matcher():
     # Anger vilka nyckelord som ska matchas
     keywords = ["github", "computer", "online"]
-    # Loopar över varje ord i nyckelorden och skapar doc objekt av deras tokens
+    # Skapar en lista av doc-objekt för varje nyckelord
     patterns = [nlp.make_doc(text) for text in keywords]
-    # Lägger till pattern ovan till matcher.
+    # Lägger till listan ovan till matcher.
     matcher.add("FirstReplyKeywords", patterns)
 
 
@@ -76,10 +74,11 @@ def respond_to_first_reply(doc):
     matches = matcher(doc)
     # Skapar en variabel för att hålla koll på om matchning hittats, initialiseras till falskt
     match_found = False
-    # Loopar genom varje matchning och hittar deras plats
+    # Loopar genom varje matchning och hittar deras index
     for match_id, start, end in matches:
+        # Kontrollerar om matchning till nyckelord (numeriskt värde jämförs med strängvärde)
         if nlp.vocab.strings[match_id] == "FirstReplyKeywords":
-            # Loopen avbryts när matchning hittats
+            # Loopen avbryts när matchning hittats och variabeln ändras
             match_found = True
             break
 
@@ -87,7 +86,7 @@ def respond_to_first_reply(doc):
     if match_found:
         return ("Lucky that I recorded my memories in some more lasting way than ink.\n"
                 "This app holds memories of terrible things involving Hogwarts and the Chamber of Secrets.")
-    # Om ingen matchning hittats så skrivs ett annat meddelande ut där användaren fortsatt har möjlighet att fortsätta
+    # Om ingen matchning hittats så skrivs ett annat meddelande ut där användaren har möjlighet att fortsätta
     else:
         return ("Is that some muggle technology? Anyway, this app holds memories of terrible things involving "
                 "Hogwarts and the Chamber of Secrets.")
@@ -97,7 +96,7 @@ def respond_to_first_reply(doc):
 def second_matcher():
     # Anger nyckelord att leta efter
     keywords = ["yes", "tell me", "chamber of secrets"]
-    # Loopar över varje ord i nyckelorden och skapar doc objekt av deras tokens
+    # Skapar en lista av doc-objekt för varje nyckelord
     patterns = [nlp.make_doc(text) for text in keywords]
     # Lägger till i matcher
     matcher.add("SecondReplyKeywords", patterns)
@@ -105,37 +104,52 @@ def second_matcher():
 
 # Funktion för att svara på användarens input
 def respond_to_second_reply(doc):
+    # Skapar en variabel av innehållet i doc objektet
     matches = matcher(doc)
+    # Ny boole som startar på falskt
     match_found = False
+    # Loopar genom varje matchning och hittar deras index
     for match_id, start, end in matches:
+        # # Kontrollerar om matchning till nyckelord
         if nlp.vocab.strings[match_id] == "SecondReplyKeywords":
+            # Ändrar variabelns värde till sant och bryter loopen
             match_found = True
             break
-
+    # Passande meddelande skrivs ut om matchning hittats
     if match_found:
         return ("In my fifth year, the Chamber of Secrets was opened and a monster attacked several students,\n"
                 "finally killing one. I caught the person who had opened the Chamber and he was expelled. \n"
                 "The story was covered up as an accident and I was warned to keep my mouth shut. \n"
                 "But the monster is still alive and it can happen again.")
+    # Passande meddelande skrivs ut om matchning EJ har hittats
     else:
-        return "Are you not interested in the Chamber of Secrets?"
+        return "It seems you are not interested in the Chamber of Secrets. Even if... "
 
 
 # Funktion för tredje matchningen
 def third_matcher():
+    # Skapar nyckelord att matcha
     keywords = ["who", "so", "and"]
+    # Skapar en lista av doc-objekt för varje nyckelord
     patterns = [nlp.make_doc(text) for text in keywords]
+    # Lägger till i matcher
     matcher.add("ThirdReplyKeywords", patterns)
 
 
+# Funktion för tredje svaret
 def respond_to_third_reply(doc):
+    # Skapar en variabel av innehållet i doc objektet
     matches = matcher(doc)
+    # Ny variabel som är falsk
     match_found = False
+    # Loopar genom varje matchning och hittar deras index
     for match_id, start, end in matches:
+        #
         if nlp.vocab.strings[match_id] == "ThirdReplyKeywords":
+            # Ändrar variabeln och bryter
             match_found = True
             break
-
+    # Lämpligt meddelande skrivs ut om matchning hittats
     if match_found:
         return ("IT WAS ME ALL ALONG. \n"
                 "THE HEIR OF SLYTHERIN HAS INFECTED YOUR COMPUTER WITH A VIRUS. *HISSES IN PARSELTONGUE* \n"
@@ -183,28 +197,34 @@ def respond_to_third_reply(doc):
 def chat():
     # Anropar metod för att användaren ska mata in sitt namn
     name = get_name("What is your name? ")
+    # Returnerar noll om inget namn matas in eller om ord för att avsluta matats in
     if name is None:
         return
 
-    # Anropar metod matchningarna
+    # Anropar metoder för matchningarna av nyckelord
     first_matcher()
     second_matcher()
     third_matcher()
 
+    # Skapar första svaret från chatboten med en prompt att användaren ska skriva in ett svar
     doc = get_user_response("How did you come by my app? ")
     if doc is None:
         return
     response = respond_to_first_reply(doc)
     print("Tom Riddle: ", response)
 
+    # Användaren promptas att mata in ett svar för att påbörja nästa del av konversationen
     doc = get_user_response("Would you like to know more? ")
     if doc is None:
         return
+    # Lämpligt svar matas ut om ord matchats
     response = respond_to_second_reply(doc)
     print("Tom Riddle: ", response)
 
-    doc = get_user_response("But I know who it was last time... ")
+    # Användaren får möjlighet att få reda på den sista biten i historien genom att skriva in rätt svar som matchas
+    doc = get_user_response("I know who it was last time... ")
     if doc is None:
         return
+    # Lämplig svar skrivs ut om orden matchats
     response = respond_to_third_reply(doc)
     print("Tom Riddle: ", response)

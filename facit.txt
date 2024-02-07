@@ -6,8 +6,8 @@ Godkända svar: Github, online, computer
 Would you like to know more?
 Godkända svar: Yes, tell me, Chamber of Secrets
 
-But I know who it was last time...
-Godkända svar: Who, so, and
+I know who it was last time...
+Godkända svar: Who[?], so[?], and[?]
 
 Programmet kan när som helst avslutas genom att användaren matar in något av följande ord:
 No, quit, exit, stop
