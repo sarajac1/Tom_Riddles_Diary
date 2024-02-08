@@ -144,7 +144,7 @@ def respond_to_third_reply(doc):
     match_found = False
     # Loopar genom varje matchning och hittar deras index
     for match_id, start, end in matches:
-        #
+        # Kollar om matchning skett
         if nlp.vocab.strings[match_id] == "ThirdReplyKeywords":
             # Ändrar variabeln och bryter
             match_found = True
@@ -206,10 +206,11 @@ def chat():
     second_matcher()
     third_matcher()
 
-    # Skapar första svaret från chatboten med en prompt att användaren ska skriva in ett svar
+    # Skapar första svaret från chatbot med en prompt att användaren ska skriva in ett svar
     doc = get_user_response("How did you come by my app? ")
     if doc is None:
         return
+    # Skriver ut ett lämpligt svar beroende på om matchning hittats eller ej
     response = respond_to_first_reply(doc)
     print("Tom Riddle: ", response)
 
@@ -225,6 +226,6 @@ def chat():
     doc = get_user_response("I know who it was last time... ")
     if doc is None:
         return
-    # Lämplig svar skrivs ut om orden matchats
+    # Lämpligt svar skrivs ut om orden matchats
     response = respond_to_third_reply(doc)
     print("Tom Riddle: ", response)
