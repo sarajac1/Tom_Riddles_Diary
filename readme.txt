@@ -17,6 +17,7 @@ För mer information om frågorna och möjliga svar, se facit.txt. Tanken är at
 
 En förklaring av programmet:
 
+Programmet flöde:
 Boten kommer att börja med att be om ditt namn. Om det inmatade värdet inte känns igen som ett namn (entitet: person)
 så kommer du att få en uppmaning att skriva in ett korrekt namn tills dess att det känns igen som ett riktigt namn.
 OBS att SpaCy inte är särskilt tillförlitlig när det kommer till att kunna identifiera namn korrekt då den ibland
@@ -28,6 +29,7 @@ Om det inte matchas så får du ett lämpligt meddelande med möjlighet att fort
 
 Boten kommer sedan att fråga om du vill veta mer om de händelser som skedde på skolan med en prompt om att man kan få
 reda på mer. Programmet är klart när boten avslutat sin historia eller när du själv skriver in ett ord för att avbryta.
+Programmet kan även avslutas om du inte matar inte ett tillfredsställande svar/svarar "rätt".
 
 Du kan när som helst avsluta programmet under körning genom att mata in ett av fyra ord (se facit).
 
